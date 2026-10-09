@@ -1,0 +1,5 @@
+des: "yq - a lightweight and portable command-line YAML, JSON and XML processor"
+hom: "https://github.com/mikefarah/yq"
+lic: "MIT"
+aut: "Mike Farah"
+bin_name: "yq"

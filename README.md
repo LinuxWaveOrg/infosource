@@ -68,6 +68,7 @@ rg            by Andrew Gallant
 tmux          by Nicholas Marriott and contributors
 trollrestore  by JJTech (@JJTech0130)
 wget          by GNU Project
+yq            by Mike Farah
 zoxide        by Ajeet D'Souza
 ```
 
