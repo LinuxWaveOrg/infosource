@@ -9,12 +9,12 @@ dependency comes from, its `sha256`, and what it depends on.
 
 [linuxwave.org](https://linuxwave.org)
 
-# 🌊 What is this branch?
+# 🌊 What is this repository?
 
-LinuxWave itself lives on `main`. This branch carries **data only** — the
-installer and `wave selfupdate` never read it, but `wave install`,
-`wave search` and `wave info` do, and they read it live (there is no local
-cache to refresh).
+LinuxWave itself lives in `LinuxWaveOrg/LinuxWave`. This repository carries
+**data only** — the installer and `wave selfupdate` never read it, but
+`wave install`, `wave search` and `wave info` do, and they read it live
+(there is no local cache to refresh).
 
 # 🌊 Layout
 
@@ -22,8 +22,8 @@ cache to refresh).
 pkg/pkginfo_{arch}/{name}/_{name}@common             bin_name / des / hom / lic / aut
 pkg/pkginfo_{arch}/{name}/_{name}@{version}          url / sha256 / deps
 
-surfboard/depsinfo_{arch}/{name}/_{name}@common      dep_name / des / hom / lic / aut
-surfboard/depsinfo_{arch}/{name}/_{name}@{version}   url / sha256 / deps
+deps/depsinfo_{arch}/{name}/_{name}@common      dep_name / des / hom / lic / aut
+deps/depsinfo_{arch}/{name}/_{name}@{version}   url / sha256 / deps
 ```
 
 `{arch}` is `amd64` (linux-64) or `arm64` (linux-aarch64).
