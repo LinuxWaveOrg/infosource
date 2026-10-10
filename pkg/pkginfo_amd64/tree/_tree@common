@@ -1,0 +1,5 @@
+des: "tree - a recursive directory listing command that produces a depth indented listing of files"
+hom: "https://oldmanprogrammer.net/source.php?dir=projects/tree"
+lic: "GPL-2.0"
+aut: "Steve Baker, Thomas Moore, Francesc Rocher, Florian Sesser, Kyosuke Tokoro"
+bin_name: "tree"
