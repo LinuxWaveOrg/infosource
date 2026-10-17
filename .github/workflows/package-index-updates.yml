@@ -1,0 +1,160 @@
+name: Package index updates
+
+on:
+  schedule:
+    - cron: "17 17 * * *"
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Check out infosource
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Test updater
+        run: python3 scripts/package_updates_test.py
+
+      - name: Find safe package updates
+        run: |
+          python3 scripts/check_package_updates.py \
+            --write \
+            --report-file "$RUNNER_TEMP/package-updates.md"
+          cat "$RUNNER_TEMP/package-updates.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Validate generated records
+        run: |
+          mapfile -t records < <(git ls-files --others --exclude-standard -- 'pkg/pkginfo_*/*/_*@*')
+          if [ "${#records[@]}" -gt 0 ]; then
+            python3 scripts/validate_update_records.py "${records[@]}"
+          fi
+
+      - name: Open or update the review pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: automation/auto-package-index-updates
+          delete-branch: true
+          title: "Update package index versions"
+          body-path: ${{ runner.temp }}/package-updates.md
+          commit-message: "Update package index versions"
+          # The PR author is the token owner, and GitHub rejects a review
+          # request aimed at the PR author, so assign it instead.
+          assignees: Sha0huaZhang
+          token: ${{ secrets.AUTOMATION_TOKEN }}
+
+  validate:
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out infosource
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Test updater
+        run: |
+          python3 scripts/package_updates_test.py
+          python3 -m py_compile \
+            scripts/check_package_updates.py \
+            scripts/validate_update_records.py \
+            scripts/build_index_release.py
+
+      - name: Validate new package records
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          git fetch origin "$BASE_REF"
+          git diff --name-only --diff-filter=AM "origin/$BASE_REF...HEAD" \
+            -- 'pkg/pkginfo_*/*/_*@*' > "$RUNNER_TEMP/changed-records.txt"
+          if [ ! -s "$RUNNER_TEMP/changed-records.txt" ]; then
+            echo "No package version records changed."
+            exit 0
+          fi
+          mapfile -t records < "$RUNNER_TEMP/changed-records.txt"
+          python3 scripts/validate_update_records.py "${records[@]}"
+
+  publish:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.ref == 'automation/auto-package-index-updates' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.body, '<!-- linuxwave-package-index-updates -->')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      LINUXWAVE_RELEASE_TOKEN: ${{ secrets.LINUXWAVE_RELEASE_TOKEN }}
+    steps:
+      - name: Check out merged infosource
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Prepare release notes
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files" \
+            --jq '.[].filename' \
+            | python3 scripts/build_index_release.py > "$RUNNER_TEMP/release-notes.md"
+          cat "$RUNNER_TEMP/release-notes.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish Index Update release in LinuxWave
+        env:
+          GH_TOKEN: ${{ secrets.LINUXWAVE_RELEASE_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::Set the LINUXWAVE_RELEASE_TOKEN secret in LinuxWaveOrg/infosource."
+            exit 1
+          fi
+
+          date_part="$(TZ=Asia/Shanghai date +%Y%m%d)"
+          tag=""
+          for suffix in $(seq -w 1 99); do
+            candidate="index${date_part}${suffix}"
+            if ! gh api "repos/LinuxWaveOrg/LinuxWave/git/ref/tags/${candidate}" >/dev/null 2>&1; then
+              tag="$candidate"
+              break
+            fi
+          done
+          if [ -z "$tag" ]; then
+            echo "::error::No unused Index Update tag remains for ${date_part}."
+            exit 1
+          fi
+
+          gh release create "$tag" \
+            --repo LinuxWaveOrg/LinuxWave \
+            --target main \
+            --title "Index Update-${tag#index}" \
+            --notes-file "$RUNNER_TEMP/release-notes.md" \
+            --latest=false
