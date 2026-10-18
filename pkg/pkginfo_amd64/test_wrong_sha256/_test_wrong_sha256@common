@@ -1,5 +1,5 @@
 bin_name: "test_wrong_sha256"
-des: "MacWave test package."
-hom: "https://github.com/MacWaveOrg/MacWave"
+des: "LinuxWave test package."
+hom: "https://github.com/LinuxWaveOrg/LinuxWave"
 lic: "MIT"
-aut: "Sha0huaZhang (MacWave Team)"
+aut: "LinuxWave Team"
