@@ -1,0 +1,5 @@
+des: "taskwarrior-tui - a terminal user interface for taskwarrior"
+hom: "https://kdheepak.com/taskwarrior-tui"
+lic: "MIT"
+aut: "kdheepak"
+bin_name: "taskwarrior-tui"
