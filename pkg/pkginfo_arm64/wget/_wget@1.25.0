@@ -1,4 +1,5 @@
 sha256: "3233b8819fdd7d3c7a0d0034cbc76ac440408fa808d29e164e4847af968f12ca"
+file: "wget-1.25.0-h0eab443_1.tar.bz2"
 url: "https://repo.continuum.io/pkgs/main/linux-aarch64/wget-1.25.0-h0eab443_1.tar.bz2"
 deps: "gettext@0.25.1"
       "libiconv@1.18"

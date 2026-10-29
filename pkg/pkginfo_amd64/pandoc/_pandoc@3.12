@@ -1,2 +1,3 @@
 sha256: "67d7d011fed8c8543306022b985b9b2499ab9b74818df91d8727c7e9ebc5ba06"
+file: "pandoc-3.12-linux-amd64.tar.gz"
 url: "https://github.com/jgm/pandoc/releases/download/3.12/pandoc-3.12-linux-amd64.tar.gz"
