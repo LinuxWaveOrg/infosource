@@ -1,3 +1,4 @@
 sha256: "af4b1b8db42d67468b6a4e8843949c76fb26128eb4785e6884a2987c273d6597"
+file: "libevent-2.1.13-h4760328_0.tar.bz2"
 url: "https://repo.continuum.io/pkgs/main/linux-aarch64/libevent-2.1.13-h4760328_0.tar.bz2"
 deps: "openssl@3.5.9"
