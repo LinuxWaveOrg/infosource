@@ -64,6 +64,19 @@ def validate(path: Path) -> list[str]:
     if parsed.scheme != "https" or not parsed.hostname:
         errors.append(f"{relative}: URL must be HTTPS")
     else:
+        upstream_file = fields.get("file", "")
+        expected_name = Path(urllib.parse.unquote(parsed.path)).name
+        if not upstream_file:
+            errors.append(
+                f"{relative}: file must record the upstream asset filename "
+                f"(expected {expected_name!r})"
+            )
+        elif "/" in upstream_file:
+            errors.append(f"{relative}: file must be a bare filename, not a path")
+        elif expected_name and upstream_file != expected_name:
+            errors.append(
+                f"{relative}: file is {upstream_file!r} but the URL names {expected_name!r}"
+            )
         declared = url_arch(url)
         if declared is not None and declared != arch:
             errors.append(

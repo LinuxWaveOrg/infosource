@@ -315,14 +315,22 @@ def discover_updates(root: Path) -> tuple[list[dict[str, str]], list[str]]:
             except RuntimeError as error:
                 skipped.append(f"`{package}` ({arch}) {new_version}: {error}")
                 continue
+            # 上游文件名要写进记录：它决定落盘名里的扩展名，而扩展名又决定用哪个
+            # 解压器。只看 url 猜不出来 —— 裸二进制（jq-linux-amd64）与压缩包
+            # （tree-2.3.2.conda）在 URL 上都只是一个普通文件名。
+            asset_name = Path(urllib.parse.unquote(parsed_url.path)).name
+            if not asset_name:
+                skipped.append(f"`{package}` ({arch}) {new_version}: asset URL has no filename")
+                continue
             planned.append(
                 {
                     "package": package,
                     "version": new_version,
                     "arch": arch,
                     "path": str(version_path.relative_to(root)),
-                    "content": f'sha256: "{digest}"\nurl: "{url}"\n',
+                    "content": f'sha256: "{digest}"\nfile: "{asset_name}"\nurl: "{url}"\n',
                     "url": url,
+                    "file": asset_name,
                     "sha256": digest,
                 }
             )
