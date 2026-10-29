@@ -237,9 +237,31 @@ class UpdateRecordValidationTests(unittest.TestCase):
         path = self.write_record(
             "pkg/pkginfo_amd64/tree/_tree@2.2.1",
             f'sha256: "{"a" * 64}"\n'
+            'file: "tree-2.2.1-h6e16a3a_0.conda"\n'
             'url: "https://conda.anaconda.org/conda-forge/linux-64/tree-2.2.1-h6e16a3a_0.conda"\n',
         )
         self.assertEqual(validate(path), [])
+
+    def test_record_without_file_is_rejected(self):
+        path = self.write_record(
+            "pkg/pkginfo_amd64/tool/_tool@1.3.0",
+            f'sha256: "{"c" * 64}"\n'
+            'url: "https://github.com/example/tool/releases/download/v1.3.0/tool-linux-amd64.zip"\n',
+        )
+        errors = validate(path)
+        self.assertTrue(errors)
+        self.assertIn("file", errors[0])
+
+    def test_file_that_disagrees_with_the_url_is_rejected(self):
+        path = self.write_record(
+            "pkg/pkginfo_amd64/tool/_tool@1.3.0",
+            f'sha256: "{"d" * 64}"\n'
+            'file: "something-else.tar.gz"\n'
+            'url: "https://github.com/example/tool/releases/download/v1.3.0/tool-linux-amd64.zip"\n',
+        )
+        errors = validate(path)
+        self.assertTrue(errors)
+        self.assertIn("file", errors[0])
 
     def test_contradictory_architecture_is_rejected(self):
         path = self.write_record(
