@@ -1,0 +1,3 @@
+sha256: "c5f4720cdefb3f7bdc5d07202ef579feef0d1370773c873804dd8fdaa8c4f1b8"
+file: "pandoc-3.14-linux-amd64.tar.gz"
+url: "https://github.com/jgm/pandoc/releases/download/3.14/pandoc-3.14-linux-amd64.tar.gz"
