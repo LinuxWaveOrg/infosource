@@ -1,4 +1,4 @@
-sha256: "87ba4ad68e4c23cdec6d22ce913f644ac713ef60f0c65acf8fcfcaf2e31703ed"
+sha256: "ce059957b86a2e3728cb12d64acdbecddf074cfab3673e39fdbb32ef6c304bd5"
 file: "gwget-amd64.tar.bz2"
 url: "https://github.com/LinuxWaveOrg/Ports/releases/download/gwget/gwget-amd64.tar.bz2"
 deps: "gettext@0.25.1"
