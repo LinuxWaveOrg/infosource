@@ -1,0 +1,5 @@
+des: "GNU Wget (g-prefixed; GNU packages are always installed with a g)"
+hom: "https://www.gnu.org/software/wget/"
+lic: "GPL-3.0"
+aut: "GNU Project"
+bin_name: "gwget"
