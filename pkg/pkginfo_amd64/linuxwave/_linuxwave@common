@@ -1,0 +1,5 @@
+des: "Generate music from the entropy of Linux"
+hom: "https://github.com/orhun/linuxwave"
+lic: "MIT"
+aut: "orhun"
+bin_name: "linuxwave"
