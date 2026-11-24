@@ -1,6 +1,6 @@
 sha256: "ce059957b86a2e3728cb12d64acdbecddf074cfab3673e39fdbb32ef6c304bd5"
-file: "gwget-amd64.tar.bz2"
-url: "https://github.com/LinuxWaveOrg/Ports/releases/download/gwget/gwget-amd64.tar.bz2"
+file: "gwget-1.25.0-1-amd64.tar.bz2"
+url: "https://github.com/LinuxWaveOrg/Ports/releases/download/gwget/gwget-1.25.0-1-amd64.tar.bz2"
 deps: "gettext@0.25.1"
       "libiconv@1.18"
       "libidn2@2.3.8"
