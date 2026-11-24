@@ -1,4 +1,4 @@
-sha256: "7c2eb05892786b28a8e31a9fb5a04fc5402262606502de7ac22c90f508eec2e3"
+sha256: "8685900ecda486f158d0fcf71a00400bf33f6350f188471766c7af2639da7c3e"
 file: "gwget-arm64.tar.bz2"
 url: "https://github.com/LinuxWaveOrg/Ports/releases/download/gwget/gwget-arm64.tar.bz2"
 deps: "gettext@0.25.1"
